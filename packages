@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>그립애즈 패키지 - Grip Live Commerce Ads</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        * {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+        }
+        
+        body {
+            background: #f6f6f6;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+        }
+        
+        .faq-item {
+            cursor: pointer;
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .faq-answer.active {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="text-2xl font-bold text-gray-900">GripAds</div>
+            <a href="https://grip.show" class="text-sm text-gray-600 hover:text-gray-900">grip.show →</a>
+        </div>
+    </header>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="max-w-7xl mx-auto px-6 py-16">
+        <!-- 히어로 섹션 -->
+        <div class="text-center mb-16">
+            <h1 class="text-5xl font-extrabold text-gray-900 mb-4">그립애즈 패키지</h1>
+            <p class="text-xl text-gray-600 mb-8">라이브 커머스 방송의 성공을 위한 광고 솔루션</p>
+            <div class="inline-flex items-center gap-3 bg-purple-600 text-white px-6 py-3 rounded-full font-bold shadow-lg">
+                🎁 3회 구매 시 +1회 무료
+            </div>
+        </div>
+
+        <!-- 패키지 그리드 -->
+        <div class="grid md:grid-cols-3 gap-6 mb-20 items-start">
+            <!-- 프리미엄 -->
+            <div class="bg-white rounded-3xl p-8 shadow-sm border-2 border-gray-100 card-hover transition-all flex flex-col h-full">
+                <div class="text-6xl mb-4">👑</div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">프리미엄</h3>
+                <p class="text-gray-600 text-sm mb-6">단골 확보 + 시청자 유입 + 브랜딩 올인원</p>
+                
+                <div class="mb-6">
+                    <div class="flex items-baseline gap-2 mb-1">
+                        <span class="text-4xl font-extrabold text-gray-900">199만원</span>
+                        <span class="text-gray-500">/ 회</span>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <span class="line-through">245만원</span>
+                        <span class="text-red-500 font-semibold ml-2">46만원 할인</span>
+                    </div>
+                </div>
+
+                <div class="bg-purple-50 rounded-2xl p-4 mb-6">
+                    <div class="text-xs font-bold text-gray-700 uppercase mb-3">예상 성과</div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">시청자</span>
+                            <span class="font-bold text-gray-900">15,000명+</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">신규 단골</span>
+                            <span class="font-bold text-gray-900">1,500명+</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3 mb-6 flex-grow">
+                    <div class="flex items-start gap-3 text-sm">
+                        <span class="text-purple-600 mt-0.5">✓</span>
+                        <div>
+                            <div class="font-semibold text-gray-900">CRM 메시지 2만건</div>
+                            <div class="text-xs text-gray-500">관심사/구매 기반 고급 타겟팅</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 text-sm">
+                        <span class="text-purple-600 mt-0.5">✓</span>
+                        <div>
+                            <div class="font-semibold text-gray-900">앱 푸시 알림 2만건</div>
+                            <div class="text-xs text-gray-500">타겟 유저 대상 방송 알림</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 text-sm">
+                        <span class="text-purple-600 mt-0.5">✓</span>
+                        <div>
+                            <div class="font-semibold text-gray-900">인앱 카드배너 노출</div>
+                            <div class="text-xs text-gray-500">메인 및 카테고리 상단 배너</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 text-sm">
+                        <span class="text-purple-600 mt-0.5">✓</span>
+                        <div>
+                            <div class="font-semibold text-gray-900">외부 매체 믹스 (최대)</div>
+                            <div class="text-xs text-gray-500">엘포인트, 하나머니 등 다채널 노출</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="w-full bg-gray-200 hover:bg-gray-300 text-gray-900 font-bold py-3 rounded-xl transition-colors">
+                    상담 신청하기
+                </button>
+                <p class="text-center text-xs text-gray-500 mt-2">⚠️ 사전 심사 필수</p>
+            </div>
+
+            <!-- 라이브 퍼포먼스 (BEST) -->
+            <div class="bg-white rounded-3xl p-8 shadow-lg border-2 border-purple-500 card-hover transition-all relative flex flex-col h-full">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-500 text-white text-xs font-bold px-4 py-1 rounded-full">
+                    ⭐ BEST CHOICE
+                </div>
+                
+                <div class="text-6xl mb-4">🚀</div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">라이브 퍼포먼스</h3>
+                <p class="text-gray-600 text-sm mb-6">구매 전환에 집중한 진성 고객 타겟팅</p>
+                
+                <div class="mb-6">
+                    <div class="flex items-baseline gap-2 mb-1">
+                        <span class="text-4xl font-extrabold text-gray-900">99만원</span>
+                        <span class="text-gray-500">/ 회</span>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <span class="line-through">120만원</span>
+                        <span class="text-red-500 font-semibold ml-2">21만원 할인</span>
+                    </div>
+                </div>
+
+                <div class="bg-purple-50 rounded-2xl p-4 mb-6">
+                    <div class="text-xs font-bold text-gray-700 uppercase mb-3">예상 성과</div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">시청자</span>
+                            <span class="font-bold text-gray-900">10,000명+</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 opacity-0">신규 단골</span>
+                            <span class="font-bold text-gray-900 opacity-0">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3 mb-6 flex-grow">
+                    <div class="flex items-start gap-3 text-sm">
+                        <span class="text-purple-600 mt-0.5">✓</span>
+                        <div>
+                            <div class="font-semibold text-gray-900">CRM 메시지 2만건</div>
+                            <div class="text-xs text-gray-500">관심사 기반 타겟팅</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 text-sm">
+                        <span class="text-purple-600 mt-0.5">✓</span>
+                        <div>
+                            <div class="font-semibold text-gray-900">외부 매체 믹스 (강력)</div>
+                            <div class="text-xs text-gray-500">하나머니, OK캐시백 등 집중 노출</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 text-sm">
+                        <span class="text-purple-600 mt-0.5">✓</span>
+                        <div>
+                            <div class="font-semibold text-gray-900">구매 전환 집중 설계</div>
+                            <div class="text-xs text-gray-500">단순 유입보다 구매에 초점</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-colors">
+                    지금 신청하기
+                </button>
+                <p class="text-center text-xs text-gray-500 mt-2 opacity-0">placeholder</p>
+            </div>
+
+            <!-- 스타터 -->
+            <div class="bg-white rounded-3xl p-8 shadow-sm border-2 border-gray-100 card-hover transition-all flex flex-col h-full">
+                <div class="text-6xl mb-4">⚡</div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">스타터</h3>
+                <p class="text-gray-600 text-sm mb-6">합리적 비용으로 방송 분위기 조성</p>
+                
+                <div class="mb-6">
+                    <div class="flex items-baseline gap-2 mb-1">
+                        <span class="text-4xl font-extrabold text-gray-900">39만원</span>
+                        <span class="text-gray-500">/ 회</span>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <span class="line-through">55만원</span>
+                        <span class="text-red-500 font-semibold ml-2">첫 구매 특가</span>
+                    </div>
+                </div>
+
+                <div class="bg-purple-50 rounded-2xl p-4 mb-6">
+                    <div class="text-xs font-bold text-gray-700 uppercase mb-3">예상 성과</div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">시청자</span>
+                            <span class="font-bold text-gray-900">5,000명+</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 opacity-0">신규 단골</span>
+                            <span class="font-bold text-gray-900 opacity-0">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3 mb-6 flex-grow">
+                    <div class="flex items-start gap-3 text-sm">
+                        <span class="text-purple-600 mt-0.5">✓</span>
+                        <div>
+                            <div class="font-semibold text-gray-900">CRM 메시지 8천건</div>
+                            <div class="text-xs text-gray-500">데모그래픽 타겟팅</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 text-sm">
+                        <span class="text-purple-600 mt-0.5">✓</span>
+                        <div>
+                            <div class="font-semibold text-gray-900">외부 매체 믹스 (기본)</div>
+                            <div class="text-xs text-gray-500">에이블리, 로카 등 가성비 매체</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 text-sm">
+                        <span class="text-purple-600 mt-0.5">✓</span>
+                        <div>
+                            <div class="font-semibold text-gray-900">방송 시청자 부스팅</div>
+                            <div class="text-xs text-gray-500">시작 시점 트래픽 집중</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="w-full bg-gray-200 hover:bg-gray-300 text-gray-900 font-bold py-3 rounded-xl transition-colors">
+                    지금 신청하기
+                </button>
+                <p class="text-center text-xs text-gray-500 mt-2 opacity-0">placeholder</p>
+            </div>
+        </div>
+
+        <!-- 프리미엄 심사 안내 -->
+        <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-6 mb-12">
+            <h3 class="text-lg font-bold text-gray-900 mb-2">💎 프리미엄 패키지 심사 안내</h3>
+            <p class="text-sm text-gray-700 mb-4">
+                프리미엄 패키지는 앱 내 노출이 포함되어 있어 사전 심사가 진행됩니다.
+            </p>
+            <div class="bg-white rounded-xl p-4 text-sm text-gray-600">
+                <div class="font-bold text-gray-800 mb-2">심사 기준</div>
+                <ul class="space-y-1 list-disc list-inside">
+                    <li>판매 이력 및 고객 만족도</li>
+                    <li>상품 품질 및 정보 정확성</li>
+                    <li>브랜드 이미지 및 마케팅 적합성</li>
+                    <li>앱 정책 및 가이드라인 준수 여부</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="bg-white rounded-2xl p-8 shadow-sm">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">자주 묻는 질문</h2>
+            
+            <div class="space-y-4">
+                <div class="faq-item border-b border-gray-200 pb-4" onclick="toggleFaq(1)">
+                    <div class="flex justify-between items-center cursor-pointer">
+                        <h3 class="font-semibold text-gray-900">Q. 3+1 무료 혜택은 어떻게 적용되나요?</h3>
+                        <span id="faq-icon-1" class="text-gray-400 transition-transform">▼</span>
+                    </div>
+                    <div id="faq-answer-1" class="faq-answer mt-3 text-sm text-gray-600 leading-relaxed">
+                        모든 패키지는 3회 구매 계약 시 1회 추가 집행을 무료로 제공합니다. 예를 들어, 라이브 퍼포먼스 패키지를 3회 구매하시면 총 4회(99만원 × 3회 = 297만원)의 광고 집행이 가능합니다.
+                    </div>
+                </div>
+
+                <div class="faq-item border-b border-gray-200 pb-4" onclick="toggleFaq(2)">
+                    <div class="flex justify-between items-center cursor-pointer">
+                        <h3 class="font-semibold text-gray-900">Q. 외부 매체 믹스 노출은 어떤 매체들인가요?</h3>
+                        <span id="faq-icon-2" class="text-gray-400 transition-transform">▼</span>
+                    </div>
+                    <div id="faq-answer-2" class="faq-answer mt-3 text-sm text-gray-600 leading-relaxed">
+                        엘포인트, 하나머니, 에이블리, 로카, OK캐시백, 버즈빌 등 다양한 리워드 플랫폼 및 쇼핑 앱에 노출됩니다. 예산 및 효율 로직에 따라 최적의 매체 조합으로 유동적으로 운영됩니다.
+                    </div>
+                </div>
+
+                <div class="faq-item border-b border-gray-200 pb-4" onclick="toggleFaq(3)">
+                    <div class="flex justify-between items-center cursor-pointer">
+                        <h3 class="font-semibold text-gray-900">Q. 예상 시청자 수는 보장되나요?</h3>
+                        <span id="faq-icon-3" class="text-gray-400 transition-transform">▼</span>
+                    </div>
+                    <div id="faq-answer-3" class="faq-answer mt-3 text-sm text-gray-600 leading-relaxed">
+                        예상 시청자 수는 평균 데이터 기반 예측치입니다. 실제 성과는 방송 카테고리, 시간대, 상품 특성, 방송 진행력 등에 따라 달라질 수 있습니다.
+                    </div>
+                </div>
+
+                <div class="faq-item border-b border-gray-200 pb-4" onclick="toggleFaq(4)">
+                    <div class="flex justify-between items-center cursor-pointer">
+                        <h3 class="font-semibold text-gray-900">Q. CRM 메시지는 어떻게 타겟팅되나요?</h3>
+                        <span id="faq-icon-4" class="text-gray-400 transition-transform">▼</span>
+                    </div>
+                    <div id="faq-answer-4" class="faq-answer mt-3 text-sm text-gray-600 leading-relaxed">
+                        <strong>프리미엄/라이브 퍼포먼스:</strong> 관심사 및 구매 이력 기반 고급 타겟팅. 유사 상품 구매자, 카테고리 관심 고객 등을 정밀 타겟팅합니다.<br><br>
+                        <strong>스타터:</strong> 성별/연령 등 기본 데모그래픽 타겟팅이 적용됩니다.
+                    </div>
+                </div>
+
+                <div class="faq-item pb-4" onclick="toggleFaq(5)">
+                    <div class="flex justify-between items-center cursor-pointer">
+                        <h3 class="font-semibold text-gray-900">Q. 프리미엄 패키지 심사는 얼마나 걸리나요?</h3>
+                        <span id="faq-icon-5" class="text-gray-400 transition-transform">▼</span>
+                    </div>
+                    <div id="faq-answer-5" class="faq-answer mt-3 text-sm text-gray-600 leading-relaxed">
+                        일반적으로 영업일 기준 3~5일 소요되며, 심사 완료 후 개별 안내드립니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 안내 문구 -->
+        <div class="mt-8 bg-gray-100 rounded-2xl p-6 text-sm text-gray-600">
+            <p class="mb-2"><strong>* 예상 성과:</strong> 방송 카테고리, 시간대, 상품 특성에 따라 달라질 수 있습니다.</p>
+            <p class="mb-2"><strong>* 외부 매체:</strong> 엘포인트, 하나머니, 에이블리, 로카, OK캐시백, 버즈빌 등 예산에 따라 유동적으로 믹스됩니다.</p>
+            <p><strong>* 3+1 혜택:</strong> 모든 패키지는 3회 집행 계약 시 1회 추가 집행을 무료로 제공합니다.</p>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="bg-gray-900 text-white py-8 mt-20">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-sm text-gray-400">© 2024 Grip. All rights reserved.</p>
+            <a href="https://grip.show" class="text-sm text-gray-400 hover:text-white mt-2 inline-block">grip.show</a>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFaq(num) {
+            const answer = document.getElementById(`faq-answer-${num}`);
+            const icon = document.getElementById(`faq-icon-${num}`);
+            
+            for (let i = 1; i <= 5; i++) {
+                if (i !== num) {
+                    document.getElementById(`faq-answer-${i}`).classList.remove('active');
+                    document.getElementById(`faq-icon-${i}`).innerHTML = '▼';
+                }
+            }
+            
+            answer.classList.toggle('active');
+            icon.innerHTML = answer.classList.contains('active') ? '▲' : '▼';
+        }
+    </script>
+</body>
+</html>
