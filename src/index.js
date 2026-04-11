@@ -10,7 +10,7 @@ const apiServer = require('./api/server');
 const logger = require('./utils/logger');
 
 const SCHEDULE_URL = process.env.GRIP_LIVE_SCHEDULE_URL || 'https://grip.show/lives';
-const CRAWL_INTERVAL = process.env.CRAWL_INTERVAL || '0 0,6,12,18 * * *';
+const CRAWL_INTERVAL = process.env.CRAWL_INTERVAL || '0 0,12,18 * * *';
 const API_PORT = parseInt(process.env.API_PORT || '3000', 10);
 
 async function runPipeline() {
