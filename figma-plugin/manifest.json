@@ -1,0 +1,12 @@
+{
+  "name": "GripAds 소재 자동화",
+  "id": "gripads-material-generator",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "networkAccess": {
+    "allowedDomains": ["http://localhost:3000"],
+    "devAllowedDomains": ["http://localhost:3000"]
+  },
+  "editorType": ["figma"]
+}

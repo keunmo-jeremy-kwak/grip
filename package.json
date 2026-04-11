@@ -1,0 +1,19 @@
+{
+  "name": "gripads-automation",
+  "version": "1.0.0",
+  "description": "라이브커머스 카카오톡 광고 소재 자동화 시스템",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "crawl-once": "node src/index.js --once"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "node-cron": "^3.0.3",
+    "playwright": "^1.50.1"
+  }
+}
