@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>상세페이지 메이커</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;color:#1a1a1a;background:#fff;height:100vh;display:flex;flex-direction:column}
+
+    .header{padding:14px 20px 10px;border-bottom:1px solid #eee;flex-shrink:0}
+    .header h1{font-size:15px;font-weight:700}
+    .header p{font-size:11px;color:#888;margin-top:2px}
+
+    .tabs{display:flex;border-bottom:1px solid #eee;flex-shrink:0}
+    .tab{padding:9px 0;flex:1;text-align:center;cursor:pointer;font-size:12px;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
+    .tab.active{color:#7c3aed;border-bottom-color:#7c3aed;font-weight:600}
+
+    .pane{display:none;padding:18px 20px;overflow-y:auto;flex:1}
+    .pane.active{display:block}
+
+    .field{margin-bottom:14px}
+    label{display:block;font-size:11px;font-weight:600;color:#555;margin-bottom:4px}
+    input{width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;outline:none;transition:border-color .15s}
+    input:focus{border-color:#7c3aed}
+
+    .btn{width:100%;padding:10px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:4px}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .p{background:#7c3aed;color:#fff}.p:hover:not(:disabled){background:#6d28d9}
+    .g{background:#059669;color:#fff;margin-top:10px}.g:hover:not(:disabled){background:#047857}
+    .b{background:#2563eb;color:#fff;margin-top:8px}.b:hover:not(:disabled){background:#1d4ed8}
+    .s{background:#f3f4f6;color:#374151;margin-top:8px}.s:hover:not(:disabled){background:#e5e7eb}
+
+    .status{padding:8px 12px;border-radius:6px;font-size:12px;margin-top:10px;display:none;line-height:1.5}
+    .ok{background:#d1fae5;color:#065f46}
+    .err{background:#fee2e2;color:#991b1b}
+    .info{background:#dbeafe;color:#1e40af}
+
+    .preview-box{background:#f9fafb;border:1px solid #eee;border-radius:8px;padding:10px;margin-top:12px;max-height:180px;overflow-y:auto;display:none}
+    .prow{display:flex;padding:3px 0;border-bottom:1px solid #f0f0f0;font-size:11px}
+    .prow:last-child{border:none}
+    .pk{width:38%;font-weight:600;color:#7c3aed;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pv{width:62%;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+    .divider{height:1px;background:#eee;margin:16px 0}
+
+    .node-badge{background:#ede9fe;color:#5b21b6;border-radius:6px;padding:7px 12px;font-size:12px;margin-bottom:14px;display:none}
+    .node-badge strong{font-weight:700}
+
+    .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+    .chip{background:#ede9fe;color:#5b21b6;padding:2px 7px;border-radius:4px;font-size:10px}
+
+    .spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .section-title{font-size:12px;font-weight:700;color:#374151;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #eee}
+    .help{font-size:11px;color:#888;margin-top:4px;line-height:1.5}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>상세페이지 메이커</h1>
+    <p>아동복 스토리텔링 템플릿 · 구글 시트 연동</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="go('settings')">⚙ 설정</div>
+    <div class="tab" onclick="go('data')">📊 데이터</div>
+    <div class="tab" onclick="go('export')">📤 내보내기</div>
+  </div>
+
+  <!-- ── 설정 탭 ── -->
+  <div id="pane-settings" class="pane active">
+    <div class="field">
+      <label>Google Sheets URL</label>
+      <input id="url" type="text" placeholder="https://docs.google.com/spreadsheets/d/...">
+      <div class="help">시트를 "링크가 있는 누구나 — 뷰어" 공개로 설정하세요</div>
+    </div>
+    <div class="field">
+      <label>시트 탭 이름</label>
+      <input id="sheetName" type="text" value="Sheet1" placeholder="Sheet1">
+    </div>
+    <div class="field">
+      <label>키(Key) 열 이름</label>
+      <input id="keyCol" type="text" value="key" placeholder="key">
+      <div class="help">상품을 구분하는 열 이름 (예: key, product_id)</div>
+    </div>
+    <button class="btn p" onclick="saveSettings()">설정 저장</button>
+
+    <div class="divider"></div>
+    <div class="section-title">스프레드시트 열 이름 (변수 목록)</div>
+    <div class="chips">
+      <span class="chip">key</span>
+      <span class="chip">notice_text</span><span class="chip">promo_badge</span>
+      <span class="chip">hero_image</span><span class="chip">tagline</span>
+      <span class="chip">pain_point</span>
+      <span class="chip">feature_1_title</span><span class="chip">feature_1_desc</span><span class="chip">feature_1_image</span>
+      <span class="chip">feature_2_title</span><span class="chip">feature_2_desc</span><span class="chip">feature_2_image</span>
+      <span class="chip">feature_3_title</span><span class="chip">feature_3_desc</span><span class="chip">feature_3_image</span>
+      <span class="chip">fabric</span><span class="chip">cert_image</span>
+      <span class="chip">size_chart_image</span>
+      <span class="chip">review_1_text</span><span class="chip">review_1_author</span><span class="chip">review_1_image</span>
+      <span class="chip">review_2_text</span><span class="chip">review_2_author</span><span class="chip">review_2_image</span>
+      <span class="chip">review_3_text</span><span class="chip">review_3_author</span><span class="chip">review_3_image</span>
+      <span class="chip">price</span><span class="chip">discount</span><span class="chip">cta_url</span>
+      <span class="chip">ad_image</span><span class="chip">ad_url</span><span class="chip">ad_title</span>
+    </div>
+  </div>
+
+  <!-- ── 데이터 탭 ── -->
+  <div id="pane-data" class="pane">
+    <div class="section-title">구글 시트에서 데이터 가져오기</div>
+    <div class="field">
+      <label>Key 값</label>
+      <input id="keyVal" type="text" placeholder="예: product_001">
+    </div>
+    <button class="btn p" onclick="fetchData()">데이터 가져오기</button>
+    <div id="fetchStatus" class="status"></div>
+    <div id="previewBox" class="preview-box"><div id="previewRows"></div></div>
+
+    <div class="divider"></div>
+    <div class="section-title">피그마에 적용</div>
+    <button id="btnCreate" class="btn p" onclick="createTemplate()" disabled>새 템플릿 만들기</button>
+    <div class="help" style="margin-top:8px">· 데이터를 가져온 후 활성화됩니다<br>· 빈 값은 {{변수명}} 형태로 표시됩니다</div>
+  </div>
+
+  <!-- ── 내보내기 탭 ── -->
+  <div id="pane-export" class="pane">
+    <div class="section-title">내보내기</div>
+    <div id="nodeBadge" class="node-badge">선택된 프레임: <strong id="nodeName">—</strong></div>
+
+    <button class="btn g" onclick="exportHTML()">HTML로 내보내기</button>
+    <button class="btn b" onclick="exportImage()">이미지(PNG)로 내보내기</button>
+    <div id="exportStatus" class="status"></div>
+
+    <div class="divider"></div>
+    <div class="help">
+      · <strong>HTML</strong>: 쇼핑몰에 바로 넣을 수 있는 반응형 HTML 파일<br>
+      · <strong>PNG</strong>: 2배 해상도 이미지 파일<br>
+      · PNG 내보내기 전 Figma에서 템플릿 프레임을 선택하세요
+    </div>
+  </div>
+
+  <script>
+    // ── 상태 ─────────────────────────────────────────
+    let cfg = { url: '', sheetName: 'Sheet1', keyCol: 'key' };
+    let rowData = null;
+    let selectedNodeId = null;
+
+    // ── 탭 전환 ───────────────────────────────────────
+    function go(tab) {
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', ['settings','data','export'][i] === tab));
+      document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+      document.getElementById('pane-' + tab).classList.add('active');
+    }
+
+    // ── 설정 ─────────────────────────────────────────
+    function saveSettings() {
+      cfg.url = document.getElementById('url').value.trim();
+      cfg.sheetName = document.getElementById('sheetName').value.trim() || 'Sheet1';
+      cfg.keyCol = document.getElementById('keyCol').value.trim() || 'key';
+      if (!cfg.url) { alert('Google Sheets URL을 입력하세요.'); return; }
+      try { localStorage.setItem('dp-cfg', JSON.stringify(cfg)); } catch(e){}
+      alert('저장되었습니다.');
+    }
+
+    function loadSettings() {
+      try {
+        const s = JSON.parse(localStorage.getItem('dp-cfg') || '{}');
+        if (s.url) { cfg = s; document.getElementById('url').value = s.url; }
+        if (s.sheetName) document.getElementById('sheetName').value = s.sheetName;
+        if (s.keyCol) document.getElementById('keyCol').value = s.keyCol;
+      } catch(e){}
+    }
+
+    // ── 구글 시트 fetch ───────────────────────────────
+    function sheetId(url) {
+      const m = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+      return m ? m[1] : null;
+    }
+
+    function status(id, msg, type) {
+      const el = document.getElementById(id);
+      el.innerHTML = msg; el.className = 'status ' + type; el.style.display = 'block';
+    }
+
+    async function fetchData() {
+      const kv = document.getElementById('keyVal').value.trim();
+      if (!cfg.url) { status('fetchStatus','설정에서 Google Sheets URL을 먼저 입력하세요.','err'); return; }
+      if (!kv) { status('fetchStatus','Key 값을 입력하세요.','err'); return; }
+      const sid = sheetId(cfg.url);
+      if (!sid) { status('fetchStatus','올바른 Google Sheets URL이 아닙니다.','err'); return; }
+
+      status('fetchStatus','<span class="spin"></span>데이터 가져오는 중…','info');
+
+      try {
+        const apiUrl = `https://docs.google.com/spreadsheets/d/${sid}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(cfg.sheetName)}`;
+        const res = await fetch(apiUrl);
+        const text = await res.text();
+
+        const jsonStr = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1];
+        if (!jsonStr) throw new Error('시트를 파싱할 수 없습니다. 시트가 "링크가 있는 누구나" 공개인지 확인하세요.');
+
+        const json = JSON.parse(jsonStr);
+        if (json.status === 'error') throw new Error(json.errors?.[0]?.message || '시트 오류');
+
+        const cols = json.table.cols.map(c => (c.label || c.id).trim());
+        const keyIdx = cols.findIndex(c => c.toLowerCase() === cfg.keyCol.toLowerCase());
+        if (keyIdx < 0) throw new Error(`'${cfg.keyCol}' 열을 찾을 수 없습니다.`);
+
+        const match = json.table.rows.find(row => {
+          const cell = row.c[keyIdx];
+          return cell && String(cell.v).trim() === kv;
+        });
+        if (!match) throw new Error(`key='${kv}' 에 해당하는 행이 없습니다.`);
+
+        rowData = {};
+        cols.forEach((col, i) => {
+          const cell = match.c[i];
+          rowData[col] = cell ? String(cell.v ?? '').trim() : '';
+        });
+
+        renderPreview(rowData);
+        status('fetchStatus', '✅ 데이터를 가져왔습니다.', 'ok');
+        document.getElementById('btnCreate').disabled = false;
+
+      } catch(e) {
+        status('fetchStatus', '❌ ' + e.message, 'err');
+      }
+    }
+
+    function renderPreview(data) {
+      const box = document.getElementById('previewBox');
+      const rows = document.getElementById('previewRows');
+      rows.innerHTML = Object.entries(data).map(([k,v]) =>
+        `<div class="prow"><div class="pk">${k}</div><div class="pv" title="${v}">${v||'—'}</div></div>`
+      ).join('');
+      box.style.display = 'block';
+    }
+
+    // ── 피그마 템플릿 생성 ──────────────────────────────
+    function createTemplate() {
+      if (!rowData) return;
+      parent.postMessage({ pluginMessage: { type: 'create-template', data: rowData } }, '*');
+    }
+
+    // ── 내보내기 ──────────────────────────────────────
+    function exportHTML() {
+      if (!rowData) { status('exportStatus','먼저 데이터 탭에서 데이터를 가져오세요.','err'); return; }
+      const html = buildHTML(rowData);
+      const blob = new Blob([html], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${rowData['key'] || 'detail-page'}.html`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      status('exportStatus','✅ HTML 파일을 다운로드했습니다.','ok');
+    }
+
+    function exportImage() {
+      if (!selectedNodeId) { status('exportStatus','Figma에서 템플릿 프레임을 선택하세요.','err'); return; }
+      status('exportStatus','<span class="spin" style="border-top-color:#1e40af"></span>이미지 내보내는 중…','info');
+      parent.postMessage({ pluginMessage: { type: 'export-image', nodeId: selectedNodeId } }, '*');
+    }
+
+    // ── Figma 메시지 수신 ─────────────────────────────
+    window.onmessage = (e) => {
+      const msg = e.data.pluginMessage;
+      if (!msg) return;
+
+      if (msg.type === 'template-created') {
+        selectedNodeId = msg.nodeId;
+        document.getElementById('nodeBadge').style.display = 'block';
+        document.getElementById('nodeName').textContent = msg.nodeName;
+        status('fetchStatus','✅ 피그마에 템플릿이 생성되었습니다!','ok');
+        go('export');
+      }
+
+      if (msg.type === 'selection-changed') {
+        selectedNodeId = msg.nodeId;
+        const badge = document.getElementById('nodeBadge');
+        if (msg.nodeId) {
+          badge.style.display = 'block';
+          document.getElementById('nodeName').textContent = msg.nodeName;
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+
+      if (msg.type === 'image-export-done') {
+        const bytes = new Uint8Array(msg.data);
+        const blob = new Blob([bytes], { type: 'image/png' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = msg.filename;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        status('exportStatus','✅ 이미지를 다운로드했습니다.','ok');
+      }
+
+      if (msg.type === 'error') {
+        status('exportStatus','❌ ' + msg.message,'err');
+      }
+    };
+
+    // ── HTML 생성기 ──────────────────────────────────
+    function d(key) { return (rowData && rowData[key]) ? rowData[key] : ''; }
+
+    function buildHTML(data) {
+      rowData = data; // scope 보장
+      return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>${d('tagline') || '상세페이지'}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#1a1a1a;background:#fff}
+.wrap{max-width:800px;margin:0 auto}
+img{max-width:100%;display:block}
+
+/* 01 공지 */
+.s1{background:#FFF3CD;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;min-height:80px}
+.s1-txt{color:#785A00;font-size:15px;line-height:1.5}
+.s1-badge{background:#DC3232;color:#fff;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;white-space:nowrap;margin-left:16px}
+
+/* 02 히어로 */
+.s2{position:relative;min-height:460px;background:#282833;overflow:hidden}
+.s2 img{width:100%;height:500px;object-fit:cover}
+.s2-bg{width:100%;height:500px;background:#282833}
+.s2-ov{position:absolute;bottom:0;left:0;right:0;padding:40px;background:linear-gradient(transparent,rgba(0,0,0,.75))}
+.s2-tag{color:#fff;font-size:28px;font-weight:700;line-height:1.45}
+
+/* 03 공감 */
+.s3{background:#F8F8FA;padding:60px 40px}
+.s3-lbl{color:#9333EA;font-size:14px;margin-bottom:14px}
+.s3-txt{font-size:26px;font-weight:700;line-height:1.5;color:#1a1a1a}
+
+/* 04 솔루션 */
+.s4{background:#fff;padding:60px 40px}
+.s4-h{font-size:22px;font-weight:700;margin-bottom:36px}
+.s4-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.fc-img{width:100%;height:160px;object-fit:cover;border-radius:8px;background:#E6DCFF;margin-bottom:14px}
+.fc-ph{height:160px;background:#E6DCFF;border-radius:8px;margin-bottom:14px}
+.fc-title{font-size:16px;font-weight:700;margin-bottom:8px}
+.fc-desc{font-size:13px;color:#555;line-height:1.6}
+
+/* 05 증거 */
+.s5{background:#F0F4FF;padding:60px 40px}
+.s5-h{font-size:22px;font-weight:700;color:#1E3CA0;margin-bottom:28px}
+.s5-inner{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.s5-fab{font-size:15px;color:#32325A;line-height:1.8;white-space:pre-wrap}
+.s5-cert img{width:100%;border-radius:8px;background:#C3CEF0}
+.s5-cert-ph{height:220px;background:#C3CEF0;border-radius:8px}
+
+/* 06 사이즈 */
+.s6{background:#fff;padding:60px 40px}
+.s6-h{font-size:22px;font-weight:700;margin-bottom:28px}
+.s6 img{width:100%;border-radius:8px;background:#F0F0F0}
+.s6-ph{height:260px;background:#F0F0F0;border-radius:8px}
+
+/* 07 후기 */
+.s7{background:#FFF8F8;padding:60px 40px}
+.s7-h{font-size:22px;font-weight:700;margin-bottom:28px}
+.s7-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.rc{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,.09)}
+.rc-img{width:100%;height:160px;object-fit:cover;background:#F0E6E6}
+.rc-ph{height:160px;background:#F0E6E6}
+.rc-body{padding:16px}
+.rc-txt{font-size:13px;color:#333;line-height:1.6;margin-bottom:12px}
+.rc-auth{font-size:12px;font-weight:700;color:#964B4B}
+
+/* 08 CTA */
+.s8{background:#1E1E28;padding:50px 40px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.s8-dis{color:#C8B4FF;font-size:16px;margin-bottom:8px}
+.s8-price{color:#fff;font-size:36px;font-weight:700}
+.s8-btn{display:inline-block;background:#7820DC;color:#fff;padding:20px 36px;border-radius:40px;font-size:18px;font-weight:700;text-decoration:none;white-space:nowrap}
+
+/* 09 광고 */
+.s9{background:#fff;padding:28px 40px;border-top:1px solid #eee}
+.s9-lbl{font-size:11px;color:#aaa;margin-bottom:10px}
+.s9-inner{display:flex;align-items:center;gap:20px;text-decoration:none;color:inherit}
+.s9-img img{width:160px;height:100px;object-fit:cover;border-radius:6px;background:#ddd}
+.s9-img-ph{width:160px;height:100px;background:#ddd;border-radius:6px}
+.s9-title{font-size:16px;font-weight:700;margin-bottom:8px;color:#1a1a1a}
+.s9-link{font-size:12px;color:#2563EB}
+
+@media(max-width:600px){
+  .s4-grid,.s7-grid{grid-template-columns:1fr}
+  .s5-inner{grid-template-columns:1fr}
+  .s8{flex-direction:column;text-align:center}
+  .s9-inner{flex-direction:column}
+  .s1{flex-direction:column;gap:10px;text-align:center}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 01 공지/프로모션 -->
+<section class="s1">
+  <p class="s1-txt">${d('notice_text')}</p>
+  ${d('promo_badge') ? `<span class="s1-badge">${d('promo_badge')}</span>` : ''}
+</section>
+
+<!-- 02 히어로 -->
+<section class="s2">
+  ${d('hero_image') ? `<img src="${d('hero_image')}" alt="히어로">` : '<div class="s2-bg"></div>'}
+  <div class="s2-ov"><p class="s2-tag">${d('tagline')}</p></div>
+</section>
+
+<!-- 03 공감 -->
+<section class="s3">
+  <p class="s3-lbl">이런 고민 있으셨나요?</p>
+  <p class="s3-txt">${d('pain_point')}</p>
+</section>
+
+<!-- 04 솔루션 -->
+<section class="s4">
+  <h2 class="s4-h">이 옷이 특별한 이유</h2>
+  <div class="s4-grid">
+    ${[1,2,3].map(i=>`
+    <div>
+      ${d(`feature_${i}_image`) ? `<img class="fc-img" src="${d(`feature_${i}_image`)}" alt="${d(`feature_${i}_title`)}">` : '<div class="fc-ph"></div>'}
+      <div class="fc-title">${d(`feature_${i}_title`)}</div>
+      <div class="fc-desc">${d(`feature_${i}_desc`)}</div>
+    </div>`).join('')}
+  </div>
+</section>
+
+<!-- 05 증거 -->
+<section class="s5">
+  <h2 class="s5-h">안전하고 믿을 수 있는 소재</h2>
+  <div class="s5-inner">
+    <p class="s5-fab">${d('fabric')}</p>
+    <div class="s5-cert">
+      ${d('cert_image') ? `<img src="${d('cert_image')}" alt="인증서">` : '<div class="s5-cert-ph"></div>'}
+    </div>
+  </div>
+</section>
+
+<!-- 06 사이즈 가이드 -->
+<section class="s6">
+  <h2 class="s6-h">사이즈 가이드</h2>
+  ${d('size_chart_image') ? `<img src="${d('size_chart_image')}" alt="사이즈 가이드">` : '<div class="s6-ph"></div>'}
+</section>
+
+<!-- 07 후기 -->
+<section class="s7">
+  <h2 class="s7-h">실제 구매 후기</h2>
+  <div class="s7-grid">
+    ${[1,2,3].map(i=>`
+    <div class="rc">
+      ${d(`review_${i}_image`) ? `<img class="rc-img" src="${d(`review_${i}_image`)}" alt="후기">` : '<div class="rc-ph"></div>'}
+      <div class="rc-body">
+        <p class="rc-txt">${d(`review_${i}_text`)}</p>
+        <p class="rc-auth">${d(`review_${i}_author`)}</p>
+      </div>
+    </div>`).join('')}
+  </div>
+</section>
+
+<!-- 08 CTA -->
+<section class="s8">
+  <div>
+    ${d('discount') ? `<p class="s8-dis">${d('discount')}</p>` : ''}
+    <p class="s8-price">${d('price')}</p>
+  </div>
+  <a class="s8-btn" href="${d('cta_url')}" target="_blank">지금 구매하기</a>
+</section>
+
+<!-- 09 크로스 광고 -->
+${(d('ad_title')||d('ad_image')) ? `
+<section class="s9">
+  <p class="s9-lbl">광고</p>
+  <a class="s9-inner" href="${d('ad_url')}" target="_blank">
+    <div class="s9-img">
+      ${d('ad_image') ? `<img src="${d('ad_image')}" alt="${d('ad_title')}">` : '<div class="s9-img-ph"></div>'}
+    </div>
+    <div>
+      <p class="s9-title">${d('ad_title')}</p>
+      <p class="s9-link">${d('ad_url')}</p>
+    </div>
+  </a>
+</section>` : ''}
+
+</div>
+</body>
+</html>`;
+    }
+
+    loadSettings();
+  </script>
+</body>
+</html>

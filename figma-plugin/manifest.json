@@ -1,0 +1,8 @@
+{
+  "name": "상세페이지 메이커",
+  "id": "detail-page-maker-grip",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"]
+}
