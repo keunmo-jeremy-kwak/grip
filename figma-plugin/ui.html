@@ -172,6 +172,28 @@
       } catch(e){}
     }
 
+    // ── CSV 파서 ──────────────────────────────────────
+    function parseCSV(text) {
+      const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      return lines.filter(l => l.trim()).map(line => {
+        const cols = [];
+        let cur = '', inQ = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          if (ch === '"') {
+            if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+            else inQ = !inQ;
+          } else if (ch === ',' && !inQ) {
+            cols.push(cur); cur = '';
+          } else {
+            cur += ch;
+          }
+        }
+        cols.push(cur);
+        return cols;
+      });
+    }
+
     // ── 구글 시트 fetch ───────────────────────────────
     function sheetId(url) {
       const m = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
@@ -193,31 +215,28 @@
       status('fetchStatus','<span class="spin"></span>데이터 가져오는 중…','info');
 
       try {
-        const apiUrl = `https://docs.google.com/spreadsheets/d/${sid}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(cfg.sheetName)}`;
-        const res = await fetch(apiUrl);
-        const text = await res.text();
+        // CSV export 방식 (gviz보다 안정적, 공개 시트 필요)
+        const csvUrl = `https://docs.google.com/spreadsheets/d/${sid}/export?format=csv&sheet=${encodeURIComponent(cfg.sheetName)}`;
+        const res = await fetch(csvUrl);
+        if (!res.ok) throw new Error(`시트를 가져올 수 없습니다 (${res.status}). 시트가 "링크가 있는 누구나 — 뷰어" 공개인지 확인하세요.`);
 
-        const jsonStr = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)?.[1];
-        if (!jsonStr) throw new Error('시트를 파싱할 수 없습니다. 시트가 "링크가 있는 누구나" 공개인지 확인하세요.');
+        const csvText = await res.text();
+        if (csvText.includes('<!DOCTYPE') || csvText.includes('<html')) {
+          throw new Error('시트가 비공개입니다. 공유 설정에서 "링크가 있는 누구나 — 뷰어"로 변경하세요.');
+        }
 
-        const json = JSON.parse(jsonStr);
-        if (json.status === 'error') throw new Error(json.errors?.[0]?.message || '시트 오류');
+        const rows = parseCSV(csvText);
+        if (rows.length < 2) throw new Error('시트에 데이터가 없습니다.');
 
-        const cols = json.table.cols.map(c => (c.label || c.id).trim());
-        const keyIdx = cols.findIndex(c => c.toLowerCase() === cfg.keyCol.toLowerCase());
-        if (keyIdx < 0) throw new Error(`'${cfg.keyCol}' 열을 찾을 수 없습니다.`);
+        const headers = rows[0];
+        const keyIdx = headers.findIndex(h => h.toLowerCase() === cfg.keyCol.toLowerCase());
+        if (keyIdx < 0) throw new Error(`'${cfg.keyCol}' 열을 찾을 수 없습니다. 헤더: ${headers.join(', ')}`);
 
-        const match = json.table.rows.find(row => {
-          const cell = row.c[keyIdx];
-          return cell && String(cell.v).trim() === kv;
-        });
+        const match = rows.slice(1).find(row => (row[keyIdx] || '').trim() === kv);
         if (!match) throw new Error(`key='${kv}' 에 해당하는 행이 없습니다.`);
 
         rowData = {};
-        cols.forEach((col, i) => {
-          const cell = match.c[i];
-          rowData[col] = cell ? String(cell.v ?? '').trim() : '';
-        });
+        headers.forEach((h, i) => { rowData[h.trim()] = (match[i] || '').trim(); });
 
         renderPreview(rowData);
         status('fetchStatus', '✅ 데이터를 가져왔습니다.', 'ok');
