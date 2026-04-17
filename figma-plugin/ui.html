@@ -71,18 +71,22 @@
   <!-- ── 설정 탭 ── -->
   <div id="pane-settings" class="pane active">
     <div class="field">
+      <label>Apps Script 웹앱 URL</label>
+      <input id="gasUrl" type="text" placeholder="https://script.google.com/macros/s/.../exec">
+      <div class="help">gas-proxy.gs 를 배포한 후 웹앱 URL을 여기에 입력하세요<br>배포 방법: <strong>gas-proxy.gs</strong> 파일 참고</div>
+    </div>
+    <div class="field">
       <label>Google Sheets URL</label>
       <input id="url" type="text" placeholder="https://docs.google.com/spreadsheets/d/...">
-      <div class="help">시트를 "링크가 있는 누구나 — 뷰어" 공개로 설정하세요</div>
     </div>
     <div class="field">
       <label>시트 탭 이름</label>
-      <input id="sheetName" type="text" value="Sheet1" placeholder="Sheet1">
+      <input id="sheetName" type="text" value="시트1" placeholder="시트1">
     </div>
     <div class="field">
       <label>키(Key) 열 이름</label>
       <input id="keyCol" type="text" value="key" placeholder="key">
-      <div class="help">상품을 구분하는 열 이름 (예: key, product_id)</div>
+      <div class="help">상품을 구분하는 열 이름</div>
     </div>
     <button class="btn p" onclick="saveSettings()">설정 저장</button>
 
@@ -155,9 +159,11 @@
 
     // ── 설정 ─────────────────────────────────────────
     function saveSettings() {
+      cfg.gasUrl = document.getElementById('gasUrl').value.trim();
       cfg.url = document.getElementById('url').value.trim();
-      cfg.sheetName = document.getElementById('sheetName').value.trim() || 'Sheet1';
+      cfg.sheetName = document.getElementById('sheetName').value.trim() || '시트1';
       cfg.keyCol = document.getElementById('keyCol').value.trim() || 'key';
+      if (!cfg.gasUrl) { alert('Apps Script 웹앱 URL을 입력하세요.'); return; }
       if (!cfg.url) { alert('Google Sheets URL을 입력하세요.'); return; }
       try { localStorage.setItem('dp-cfg', JSON.stringify(cfg)); } catch(e){}
       alert('저장되었습니다.');
@@ -166,7 +172,8 @@
     function loadSettings() {
       try {
         const s = JSON.parse(localStorage.getItem('dp-cfg') || '{}');
-        if (s.url) { cfg = s; document.getElementById('url').value = s.url; }
+        if (s.gasUrl) { cfg = s; document.getElementById('gasUrl').value = s.gasUrl; }
+        if (s.url) document.getElementById('url').value = s.url;
         if (s.sheetName) document.getElementById('sheetName').value = s.sheetName;
         if (s.keyCol) document.getElementById('keyCol').value = s.keyCol;
       } catch(e){}
@@ -215,29 +222,21 @@
       status('fetchStatus','<span class="spin"></span>데이터 가져오는 중…','info');
 
       try {
-        // CSV export 방식 (gviz보다 안정적, 공개 시트 필요)
-        const csvUrl = `https://docs.google.com/spreadsheets/d/${sid}/export?format=csv&sheet=${encodeURIComponent(cfg.sheetName)}`;
-        const res = await fetch(csvUrl);
-        if (!res.ok) throw new Error(`시트를 가져올 수 없습니다 (${res.status}). 시트가 "링크가 있는 누구나 — 뷰어" 공개인지 확인하세요.`);
+        if (!cfg.gasUrl) throw new Error('설정 탭에서 Apps Script 웹앱 URL을 먼저 입력하세요.');
 
-        const csvText = await res.text();
-        if (csvText.includes('<!DOCTYPE') || csvText.includes('<html')) {
-          throw new Error('시트가 비공개입니다. 공유 설정에서 "링크가 있는 누구나 — 뷰어"로 변경하세요.');
-        }
+        const params = new URLSearchParams({
+          sheetId: sid,
+          sheetName: cfg.sheetName,
+          keyCol: cfg.keyCol,
+          keyVal: kv
+        });
+        const res = await fetch(`${cfg.gasUrl}?${params}`);
+        if (!res.ok) throw new Error(`요청 실패 (${res.status})`);
 
-        const rows = parseCSV(csvText);
-        if (rows.length < 2) throw new Error('시트에 데이터가 없습니다.');
+        const json = await res.json();
+        if (json.error) throw new Error(json.error);
 
-        const headers = rows[0];
-        const keyIdx = headers.findIndex(h => h.toLowerCase() === cfg.keyCol.toLowerCase());
-        if (keyIdx < 0) throw new Error(`'${cfg.keyCol}' 열을 찾을 수 없습니다. 헤더: ${headers.join(', ')}`);
-
-        const match = rows.slice(1).find(row => (row[keyIdx] || '').trim() === kv);
-        if (!match) throw new Error(`key='${kv}' 에 해당하는 행이 없습니다.`);
-
-        rowData = {};
-        headers.forEach((h, i) => { rowData[h.trim()] = (match[i] || '').trim(); });
-
+        rowData = json.data;
         renderPreview(rowData);
         status('fetchStatus', '✅ 데이터를 가져왔습니다.', 'ok');
         document.getElementById('btnCreate').disabled = false;
