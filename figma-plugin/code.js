@@ -14,7 +14,7 @@ async function loadFonts() {
     await figma.loadFontAsync({ family: 'Noto Sans KR', style: 'Regular' });
     await figma.loadFontAsync({ family: 'Noto Sans KR', style: 'Bold' });
     FONT = 'Noto Sans KR';
-  } catch {
+  } catch(e) {
     await figma.loadFontAsync({ family: 'Inter', style: 'Regular' });
     await figma.loadFontAsync({ family: 'Inter', style: 'Bold' });
     FONT = 'Inter';
