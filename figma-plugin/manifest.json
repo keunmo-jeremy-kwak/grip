@@ -6,6 +6,10 @@
   "ui": "ui.html",
   "editorType": ["figma"],
   "networkAccess": {
-    "allowedDomains": ["https://docs.google.com"]
+    "allowedDomains": [
+      "https://docs.google.com",
+      "https://script.google.com",
+      "https://script.googleusercontent.com"
+    ]
   }
 }
